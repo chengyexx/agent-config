@@ -18,7 +18,7 @@ agent-config/
 │  ├─ opencode-pets.json      # pets plugin config
 │  ├─ package.json            # plugin dependency
 │  ├─ agent/                  # omen-alpha, verifier
-│  ├─ skills/                 # artifact-reconciliation, github-discovery, tech-paradigm
+│  ├─ skills/                 # artifact-reconciliation, github-discovery, tech-paradigm, web-retrieval
 │  ├─ plugins/                # bun-shim, open-code-review
 │  └─ tools/                  # batch_fetch, cn_search, ddg_search
 └─ docs/
@@ -40,6 +40,27 @@ Or link individual pieces. `AGENTS.md` must live at
 
 `opencode.jsonc` uses `uvx` from `PATH`. If yours lives elsewhere, change the
 `cn` MCP command back to an absolute path.
+
+## Web retrieval stack
+
+`opencode/tools/` plus the `web-retrieval` skill form one retrieval path:
+
+| Piece | Role |
+| --- | --- |
+| `ddg_search` | DuckDuckGo HTML endpoint — an independent second index next to the built-in `websearch` |
+| `batch_fetch` | Concurrent multi-URL fetch, HTML→text, explicit `[BLOCKED]` / `[NO TEXT]` markers instead of silent empty output |
+| `cn_search` | On-demand gateway to `cn-scraper-mcp` (Bilibili, Douban, Zhihu, Weibo, Xiaohongshu); the server spawns only when called and exits after 10 min idle |
+
+Requirements: `curl.exe` on `PATH` (ships with Windows 10+) and `uvx` for `cn_search`.
+The `cn` MCP server is declared but `enabled: false`, so opencode registers none of
+its ~40 tools; only `cn_search` exists in context, and it starts the server itself.
+
+Login-walled platforms (Zhihu, Weibo, Xiaohongshu) need a one-time cookie:
+ask the agent to call `cn_search` with `tool='guided_login'`.
+
+The `web-retrieval` skill holds the channel-selection strategy and the measured
+site behaviour (which hosts need `Referer: <same url>`, which return 200 with no
+content, which are unreachable) — load it before debugging a failed fetch.
 
 ## What the rules optimize for
 
