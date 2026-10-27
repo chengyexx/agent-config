@@ -1,0 +1,8 @@
+node_modules/
+.cache/
+evidence-*.json
+research-evidence-*.json
+cache-stats.json
+*.log
+.env
+settings.local.json

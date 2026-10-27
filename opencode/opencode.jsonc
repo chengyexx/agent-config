@@ -1,0 +1,27 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "shell": "powershell",
+  "plugin": ["opencode-pets"],
+  "provider": {
+    "opencode-go": {
+      "models": {
+        "omen-alpha": { "status": "active" }
+      }
+    }
+  },
+  "mcp": {
+    "cn": {
+      "type": "local",
+      "command": [
+        "uvx",
+        "--python",
+        "3.12",
+        "--from",
+        "cn-scraper-mcp",
+        "cn-scraper-mcp"
+      ],
+      "enabled": false,
+      "timeout": 120000
+    }
+  }
+}
